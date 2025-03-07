@@ -7,7 +7,7 @@
 		"build": "tsc && resolve-tspaths",
 		"start": "node --run db:apply-migration && node --run start:prod",
 		"start:prod": "NODE_ENV=production node dist/index.js",
-		"start:dev": "NODE_ENV=development tsx src/index.ts",
+		"start:dev": "node ./scripts/depsCheck.js && NODE_ENV=development tsx src/index.ts",
 		"start:dev:watch": "NODE_ENV=development tsx --watch src/index.ts",
 		"docker:start:dev": "docker compose up",
 		"docker:stop:dev": "docker compose down",
