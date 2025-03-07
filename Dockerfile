@@ -6,15 +6,18 @@ WORKDIR /app
 
 FROM base as build
 
-RUN npm i -g pnpm
+COPY --link package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
-COPY --link package.json pnpm-lock.yaml ./
-
-RUN pnpm install
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
 COPY --link . .
 
-RUN pnpm build
+RUN node --run build
 
 FROM base
 
