@@ -32,6 +32,36 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+  cache:
+    container_name: identity-cache
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 1.5G
+    command: ['--requirepass', '${CACHE_PASSWORD}']
+    ulimits:
+      memlock: -1
+    volumes:
+      - dragonflydata:/data
+    networks:
+      - dev
+    environment:
+      - CACHE_PASSWORD=${CACHE_PASSWORD}
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${CACHE_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
   api:
     container_name: awesome-api
     build:
@@ -54,6 +84,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_PORT=5432
       - COOKIE_SECRET=${COOKIE_SECRET}
+      - CACHE_HOST=cache
+      - CACHE_USER=default
+      - CACHE_PASSWORD=${CACHE_PASSWORD}
+      - CACHE_PORT=6379
     depends_on:
       db:
         condition: service_healthy
@@ -66,3 +100,4 @@ services:
         max-file: '3'
 volumes:
   pgdata:
+  dragonflydata:

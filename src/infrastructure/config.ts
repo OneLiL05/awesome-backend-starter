@@ -1,4 +1,4 @@
-import type { Config, DbConfig } from '@/core/types/index.js'
+import type { Config, DbConfig, CacheConfig } from '@/core/types/index.js'
 import { env } from '@/env.js'
 
 const getDbConfig = (): DbConfig => ({
@@ -9,8 +9,16 @@ const getDbConfig = (): DbConfig => ({
 	database: env.POSTGRES_DB,
 })
 
+const getCacheConfig = (): CacheConfig => ({
+	host: env.CACHE_HOST,
+	user: env.CACHE_USER,
+	password: env.CACHE_PASSWORD,
+	port: env.CACHE_PORT,
+})
+
 const getConfig = (): Config => ({
 	db: getDbConfig(),
+	cache: getCacheConfig(),
 })
 
 export { getConfig }

@@ -6,6 +6,7 @@ import { asFunction, type NameAndRegistrationPair } from 'awilix'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { getConfig } from './config.js'
+import { Redis } from 'ioredis'
 
 export const resolveCommonDiConfig = (
 	dependencies: ExternalDependencies,
@@ -33,6 +34,25 @@ export const resolveCommonDiConfig = (
 		{
 			dispose: ({ connection }) => {
 				connection.end()
+			},
+		},
+	).singleton(),
+	cache: asFunction(
+		({ config }: CommonDependencies) => {
+			const { user, password, port, host } = config.cache
+
+			const cache = new Redis({
+				port,
+				host,
+				username: user,
+				password: password,
+			})
+
+			return cache
+		},
+		{
+			dispose: (redis) => {
+				redis.disconnect()
 			},
 		},
 	).singleton(),

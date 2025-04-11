@@ -6,8 +6,16 @@ interface DbConfig {
 	database: string
 }
 
-interface Config {
-	db: DbConfig
+interface CacheConfig {
+	user: string
+	host: string
+	port: number
+	password: string
 }
 
-export type { Config, DbConfig }
+interface Config {
+	db: DbConfig
+	cache: CacheConfig
+}
+
+export type { Config, DbConfig, CacheConfig }

@@ -4,6 +4,7 @@ import type { FastifyBaseLogger } from 'fastify'
 import type { Config } from './config.js'
 import type { AppInstance } from './common.js'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import type { Redis } from 'ioredis'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type BaseDiConfig<T> = Record<keyof T, Resolver<any>>
@@ -14,6 +15,7 @@ interface CommonDependencies {
 		connection: postgres.Sql
 		client: PostgresJsDatabase
 	}
+	cache: Redis
 	logger: FastifyBaseLogger
 }
 
