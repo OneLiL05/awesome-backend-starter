@@ -37,18 +37,18 @@ export const resolveCommonDiConfig = (
 			},
 		},
 	).singleton(),
-	cache: asFunction(
+	redis: asFunction(
 		({ config }: CommonDependencies) => {
-			const { user, password, port, host } = config.cache
+			const { user, password, port, host } = config.redis
 
-			const cache = new Redis({
+			const redis = new Redis({
 				port,
 				host,
 				username: user,
 				password: password,
 			})
 
-			return cache
+			return redis
 		},
 		{
 			dispose: (redis) => {

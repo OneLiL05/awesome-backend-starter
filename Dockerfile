@@ -23,7 +23,7 @@ FROM base
 
 COPY --from=build /app/dist /app/dist
 COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/migrations /app/migrations
+# COPY --from=build /app/migrations /app/migrations uncomment if you have migrations
 COPY --from=build /app/package.json /app/package.json
 COPY --from=build /app/drizzle.config.ts /app/drizzle.config.ts
 

@@ -1,21 +1,16 @@
-version: '3.8'
 networks:
   dev:
     driver: bridge
+
 services:
   db:
     container_name: awesome-db
-    image: 'postgres:latest'
+    image: 'postgres:17'
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 1.5G
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -32,28 +27,33 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
-  cache:
-    container_name: identity-cache
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+  redis:
+    container_name: awesome-redis
+    image: 'redis:8'
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 1.5G
-    command: ['--requirepass', '${CACHE_PASSWORD}']
+    command:
+      - 'redis-server'
+      - '--requirepass'
+      - '${REDIS_PASSWORD}'
+      - '--user'
+      - '${REDIS_USER}'
+      - 'on'
+      - '>${REDIS_PASSWORD}'
+      - '~*'
+      - '+@all'
     ulimits:
       memlock: -1
     volumes:
-      - dragonflydata:/data
+      - redisdata:/data
     networks:
       - dev
     environment:
-      - CACHE_PASSWORD=${CACHE_PASSWORD}
+      - REDIS_USER=${REDIS_USER}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - '6379:6379'
     healthcheck:
-      test: ['CMD', 'redis-cli', '-a', '${CACHE_PASSWORD}', 'ping']
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -68,11 +68,6 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '0.3'
-          memory: 1.5G
     ports:
       - '${PORT}:8080'
     environment:
@@ -84,10 +79,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_PORT=5432
       - COOKIE_SECRET=${COOKIE_SECRET}
-      - CACHE_HOST=cache
-      - CACHE_USER=default
-      - CACHE_PASSWORD=${CACHE_PASSWORD}
-      - CACHE_PORT=6379
+      - REDIS_HOST=redis
+      - REDIS_USER=default
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
     depends_on:
       db:
         condition: service_healthy
@@ -98,6 +93,7 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+
 volumes:
   pgdata:
-  dragonflydata:
+  redisdata:
