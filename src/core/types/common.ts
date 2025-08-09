@@ -12,4 +12,38 @@ interface HttpError {
 	message: string
 }
 
-export type { AppInstance, HttpError }
+interface ValidationError {
+	status: number
+	error: string
+	message: string
+	details: {
+		issues: unknown[]
+		method: string
+		url: string
+	}
+}
+
+interface SuccessResponse<T> {
+	success: true
+	data: T
+	message?: string
+	error: null
+}
+
+interface FailureResponse {
+	success: false
+	data: null
+	message?: string
+	error: HttpError | ValidationError
+}
+
+type BaseResponse<T> = SuccessResponse<T> | FailureResponse
+
+export type {
+	AppInstance,
+	BaseResponse,
+	FailureResponse,
+	HttpError,
+	ValidationError,
+	SuccessResponse,
+}
