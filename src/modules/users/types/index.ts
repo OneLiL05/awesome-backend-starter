@@ -4,8 +4,8 @@ import type {
 	HttpError,
 	SuccessResponse,
 } from '@/core/types/index.js'
-import type { Result } from '@/core/utils/index.js'
 import type { User } from '@/db/types.js'
+import type { Result } from 'neverthrow'
 import type { CREATE_USER_TYPE } from '../schemas/index.js'
 
 interface UsersRepository {

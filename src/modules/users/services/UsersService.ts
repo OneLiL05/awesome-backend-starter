@@ -24,10 +24,9 @@ export class UsersServiceImpl implements UsersService {
 	async createOne(data: CREATE_USER_TYPE): Promise<BaseResponse<User>> {
 		const result = await this.repository.createOne(data)
 
-		if (!result.success) {
-			return failureResponse(result.error)
-		}
-
-		return successResponse(result.value)
+		return result.match(
+			(user) => successResponse(user),
+			(error) => failureResponse(error),
+		)
 	}
 }
