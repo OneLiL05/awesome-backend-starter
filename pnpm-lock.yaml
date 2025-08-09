@@ -38,6 +38,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.4
         version: 0.44.4(gel@2.0.0)(postgres@3.4.7)
+      drizzle-query-logger:
+        specifier: ^1.0.7
+        version: 1.0.7(drizzle-orm@0.44.4(gel@2.0.0)(postgres@3.4.7))(typescript@5.9.2)
       fastify:
         specifier: ^5.4.0
         version: 5.4.0
@@ -1067,6 +1070,12 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-query-logger@1.0.7:
+    resolution: {integrity: sha512-HVvVhd+qv/SP37CjDCQxh3tTT7WDduY8AJbF/R+hdtbjznJsGxxKB/o9cc+xpdm/WbmOCqL9e0XpyDTZ53M45Q==}
+    peerDependencies:
+      drizzle-orm: ^0.44.3
+      typescript: ^5
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -2834,6 +2843,11 @@ snapshots:
     optionalDependencies:
       gel: 2.0.0
       postgres: 3.4.7
+
+  drizzle-query-logger@1.0.7(drizzle-orm@0.44.4(gel@2.0.0)(postgres@3.4.7))(typescript@5.9.2):
+    dependencies:
+      drizzle-orm: 0.44.4(gel@2.0.0)(postgres@3.4.7)
+      typescript: 5.9.2
 
   emoji-regex@10.4.0: {}
 
