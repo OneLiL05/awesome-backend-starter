@@ -1,16 +1,26 @@
 import type { BaseDiConfig, InjectableDependencies } from '@/core/types/deps.js'
-import type { HttpError } from '@/core/types/index.js'
+import type {
+	BaseResponse,
+	HttpError,
+	SuccessResponse,
+} from '@/core/types/index.js'
 import type { Result } from '@/core/utils/index.js'
 import type { User } from '@/db/types.js'
 import type { CREATE_USER_TYPE } from '../schemas/index.js'
 
-interface IUsersRepository {
+interface UsersRepository {
 	findAll: () => Promise<User[]>
 	createOne: (data: CREATE_USER_TYPE) => Promise<Result<User, HttpError>>
 }
 
+interface UsersService {
+	findAll: () => Promise<SuccessResponse<User[]>>
+	createOne: (data: CREATE_USER_TYPE) => Promise<BaseResponse<User>>
+}
+
 interface UsersModuleDependencies {
-	usersRepository: IUsersRepository
+	usersRepository: UsersRepository
+	usersService: UsersService
 }
 
 type UsersInjectableDependencies =
@@ -19,8 +29,9 @@ type UsersInjectableDependencies =
 type UsersDiConfig = BaseDiConfig<UsersModuleDependencies>
 
 export type {
-	IUsersRepository,
 	UsersDiConfig,
 	UsersInjectableDependencies,
 	UsersModuleDependencies,
+	UsersRepository,
+	UsersService,
 }

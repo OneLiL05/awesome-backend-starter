@@ -9,6 +9,7 @@ type AppInstance = FastifyInstance<
 
 interface HttpError {
 	status: number
+	error: string
 	message: string
 }
 

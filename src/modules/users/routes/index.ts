@@ -1,5 +1,6 @@
 import type { Routes } from '@/core/types/routes.js'
 import {
+	generateFailedHttpResponse,
 	generateFailedValidationResponse,
 	generateSuccessResponse,
 } from '@/core/utils/schemas.js'
@@ -37,6 +38,12 @@ export const getUsersRoutes = (): Routes => ({
 						'User created successfully',
 					),
 					400: generateFailedValidationResponse(),
+					409: generateFailedHttpResponse(409).describe(
+						'User with such name already exists',
+					),
+					500: generateFailedHttpResponse(500).describe(
+						'Internal server error',
+					),
 				},
 			},
 		},
