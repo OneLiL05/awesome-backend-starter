@@ -4,10 +4,9 @@ import { registerDependencies } from '@/infrastructure/parentDiConfig.js'
 import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix'
 import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
-import fastifyHelmet from '@fastify/helmet'
 import fastifyRateLimit from '@fastify/rate-limit'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import scalarApiReference from '@scalar/fastify-api-reference'
 import fastify from 'fastify'
 import {
 	createJsonSchemaTransform,
@@ -43,8 +42,6 @@ export class App {
 			methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
 		})
 
-		await this.app.register(fastifyHelmet)
-
 		await this.app.register(fastifySwagger, {
 			transform: createJsonSchemaTransform({
 				skipList: [
@@ -67,8 +64,11 @@ export class App {
 			},
 		})
 
-		await this.app.register(fastifySwaggerUi, {
-			routePrefix: '/api', // TODO: change to your prefix
+		await this.app.register(scalarApiReference, {
+			routePrefix: '/api', // TODO: Change to your prefix
+			configuration: {
+				theme: 'deepSpace',
+			},
 		})
 
 		await this.app.register(fastifyAwilixPlugin, {
