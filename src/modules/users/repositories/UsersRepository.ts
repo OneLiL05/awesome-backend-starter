@@ -1,19 +1,18 @@
-import { DUPLICATE_KEY_ERR_CODE } from '@/core/constants/db.js'
 import { INTERNAL_SERVER_ERR } from '@/core/constants/index.js'
 import type { HttpError } from '@/core/types/common.js'
-import { Failure, Success, type Result } from '@/core/utils/result.js'
 import { userTable } from '@/db/schema/users.js'
 import type { User } from '@/db/types.js'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import { USER_ALREADY_EXISTS_ERR } from '../constants/index.js'
 import type { CREATE_USER_TYPE } from '../schemas/index.js'
 import type {
-	IUsersRepository,
 	UsersInjectableDependencies,
+	UsersRepository,
 } from '../types/index.js'
+import { USER_ALREADY_EXISTS_ERR } from '../constants/errors.js'
+import { err, ok, Result } from 'neverthrow'
 
-export class UsersRepository implements IUsersRepository {
+export class UsersRepositoryImpl implements UsersRepository {
 	private readonly db: PostgresJsDatabase
 
 	constructor({ db }: UsersInjectableDependencies) {
@@ -33,16 +32,17 @@ export class UsersRepository implements IUsersRepository {
 				.values({ name })
 				.returning()
 
-			return Success(user!)
+			return ok(user!)
 		} catch (e: unknown) {
 			if (
-				e instanceof postgres.PostgresError &&
-				e.code === DUPLICATE_KEY_ERR_CODE
+				e instanceof Error &&
+				e.cause instanceof postgres.PostgresError &&
+				e.cause.code === '23505'
 			) {
-				return Failure(USER_ALREADY_EXISTS_ERR)
+				return err(USER_ALREADY_EXISTS_ERR)
 			}
 
-			return Failure(INTERNAL_SERVER_ERR)
+			return err(INTERNAL_SERVER_ERR)
 		}
 	}
 }

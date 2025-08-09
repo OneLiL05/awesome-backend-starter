@@ -1,16 +1,17 @@
-import type { AppInstance } from '@/core/types/common.js'
+import type { AppInstance, FailureResponse } from '@/core/types/common.js'
 import { env } from '@/env.js'
 import { registerDependencies } from '@/infrastructure/parentDiConfig.js'
 import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix'
 import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
-import fastifyHelmet from '@fastify/helmet'
 import fastifyRateLimit from '@fastify/rate-limit'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import scalarApiReference from '@scalar/fastify-api-reference'
 import fastify from 'fastify'
 import {
 	createJsonSchemaTransform,
+	hasZodFastifySchemaValidationErrors,
+	isResponseSerializationError,
 	serializerCompiler,
 	validatorCompiler,
 	type ZodTypeProvider,
@@ -43,8 +44,6 @@ export class App {
 			methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
 		})
 
-		await this.app.register(fastifyHelmet)
-
 		await this.app.register(fastifySwagger, {
 			transform: createJsonSchemaTransform({
 				skipList: [
@@ -62,13 +61,60 @@ export class App {
 				info: {
 					title: 'Awesome Backend',
 					description: 'Awesome starter template for Node.js backend',
-					version: '0.0.0',
+					version: '1.0.0',
 				},
 			},
 		})
 
-		await this.app.register(fastifySwaggerUi, {
-			routePrefix: '/api', // TODO: change to your prefix
+		await this.app.register(scalarApiReference, {
+			routePrefix: '/api', // TODO: Change to your prefix
+			configuration: {
+				theme: 'deepSpace',
+				metaData: {
+					title: 'Awesome Backend API Reference',
+					description: 'Awesome starter template for Node.js backend',
+				},
+			},
+		})
+
+		this.app.setErrorHandler((error, request, reply) => {
+			if (hasZodFastifySchemaValidationErrors(error)) {
+				const errObj = {
+					success: false,
+					data: null,
+					error: {
+						error: 'Response Validation Error',
+						message: "Request doesn't match the schema",
+						status: 400,
+						details: {
+							issues: error.validation,
+							method: request.method,
+							url: request.url,
+						},
+					},
+				} satisfies FailureResponse
+
+				return reply.status(400).send(errObj)
+			}
+
+			if (isResponseSerializationError(error)) {
+				const errObj = {
+					success: false,
+					data: null,
+					error: {
+						error: 'Response Serialization Error',
+						message: "Response doesn't match the schema",
+						status: 500,
+						details: {
+							issues: error.cause.issues,
+							method: request.method,
+							url: request.url,
+						},
+					},
+				} satisfies FailureResponse
+
+				return reply.status(500).send(errObj)
+			}
 		})
 
 		await this.app.register(fastifyAwilixPlugin, {

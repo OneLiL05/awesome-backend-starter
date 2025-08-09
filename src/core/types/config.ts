@@ -6,7 +6,7 @@ interface DbConfig {
 	database: string
 }
 
-interface CacheConfig {
+interface RedisConfig {
 	user: string
 	host: string
 	port: number
@@ -15,7 +15,7 @@ interface CacheConfig {
 
 interface Config {
 	db: DbConfig
-	cache: CacheConfig
+	redis: RedisConfig
 }
 
-export type { Config, DbConfig, CacheConfig }
+export type { Config, DbConfig, RedisConfig }

@@ -1,4 +1,4 @@
-import { integer, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { integer, timestamp } from 'drizzle-orm/pg-core'
 
 const baseTableAttrs = {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -9,7 +9,6 @@ const baseTableAttrs = {
 		.notNull()
 		.defaultNow()
 		.$onUpdateFn(() => new Date()),
-	name: varchar().unique().notNull(),
 }
 
 export { baseTableAttrs }

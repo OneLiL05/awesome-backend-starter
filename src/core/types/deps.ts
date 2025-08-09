@@ -15,7 +15,7 @@ interface CommonDependencies {
 		connection: postgres.Sql
 		client: PostgresJsDatabase
 	}
-	cache: Redis
+	redis: Redis
 	logger: FastifyBaseLogger
 }
 

@@ -7,6 +7,7 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { getConfig } from './config.js'
 import { Redis } from 'ioredis'
+import { EnhancedQueryLogger } from 'drizzle-query-logger'
 
 export const resolveCommonDiConfig = (
 	dependencies: ExternalDependencies,
@@ -25,7 +26,7 @@ export const resolveCommonDiConfig = (
 
 			return {
 				client: drizzle(queryClient, {
-					logger: true,
+					logger: new EnhancedQueryLogger(),
 					casing: 'snake_case',
 				}),
 				connection: queryClient,
@@ -37,18 +38,18 @@ export const resolveCommonDiConfig = (
 			},
 		},
 	).singleton(),
-	cache: asFunction(
+	redis: asFunction(
 		({ config }: CommonDependencies) => {
-			const { user, password, port, host } = config.cache
+			const { user, password, port, host } = config.redis
 
-			const cache = new Redis({
+			const redis = new Redis({
 				port,
 				host,
 				username: user,
 				password: password,
 			})
 
-			return cache
+			return redis
 		},
 		{
 			dispose: (redis) => {
