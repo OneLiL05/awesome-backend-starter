@@ -1,6 +1,6 @@
 {
 	"name": "awesome-backend-starter",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"description": "Awesome starter template for your next Node.js backend",
 	"scripts": {
@@ -15,8 +15,8 @@
 		"infrastructure:stop:dev": "docker compose down",
 		"db:start:dev": "docker compose up db",
 		"db:stop:dev": "docker compose down",
-		"cache:start:dev": "docker compose up cache",
-		"cache:stop:dev": "docker compose down",
+		"redis:start:dev": "docker compose up redis",
+		"redis:stop:dev": "docker compose down",
 		"db:generate-schema": "tsc -p tsconfig.drizzle.json",
 		"db:generate-migration": "NODE_ENV=development node --run db:generate-schema && npx drizzle-kit generate --config=./drizzle.config.ts",
 		"db:apply-migration": "NODE_ENV=development npx drizzle-kit migrate --config=./drizzle.config.ts",

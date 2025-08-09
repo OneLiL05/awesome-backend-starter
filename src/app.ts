@@ -61,7 +61,7 @@ export class App {
 				info: {
 					title: 'Awesome Backend',
 					description: 'Awesome starter template for Node.js backend',
-					version: '0.0.0',
+					version: '1.0.0',
 				},
 			},
 		})
