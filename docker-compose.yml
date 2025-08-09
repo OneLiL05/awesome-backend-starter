@@ -27,6 +27,19 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+  db-gateway:
+    container_name: awesome-db-gateway
+    image: 'ghcr.io/drizzle-team/gateway:latest'
+    restart: always
+    volumes:
+      - db-gateway:/app
+    networks:
+      - dev
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '4983:4983'
   redis:
     container_name: awesome-redis
     image: 'redis:8'
@@ -97,3 +110,4 @@ services:
 volumes:
   pgdata:
   redisdata:
+  db-gateway:
