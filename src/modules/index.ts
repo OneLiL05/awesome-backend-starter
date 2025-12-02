@@ -14,7 +14,7 @@ export const getRoutes = (): Routes => {
 					const data = {
 						uptime: process.uptime(),
 						message: 'Healthy!',
-						data: new Date(),
+						date: new Date(),
 					}
 
 					return reply.status(200).send(data)
