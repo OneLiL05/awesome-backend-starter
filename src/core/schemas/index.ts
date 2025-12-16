@@ -1,6 +1,6 @@
 import z from 'zod'
 
-const HEALTH_CHECK_SCHEMA = z
+const HealthCheckSchema = z
 	.object({
 		uptime: z.number().positive().describe('Uptime in seconds'),
 		message: z.string().describe('Health check message'),
@@ -8,4 +8,4 @@ const HEALTH_CHECK_SCHEMA = z
 	})
 	.describe('Health check response')
 
-export { HEALTH_CHECK_SCHEMA }
+export { HealthCheckSchema }

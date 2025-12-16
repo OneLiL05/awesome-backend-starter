@@ -2,10 +2,9 @@ import type { Routes } from '@/core/types/routes.js'
 import {
 	generateFailedHttpResponse,
 	generateFailedValidationResponse,
-	generateSuccessResponse,
 } from '@/core/utils/schemas.js'
 import { createUser, getUsers } from '../handlers/index.js'
-import { CREATE_USER_SCHEMA, USER_SCHEMA } from '../schemas/index.js'
+import { CreateUserSchema, UserSchema } from '../schemas/index.js'
 
 export const getUsersRoutes = (): Routes => ({
 	routes: [
@@ -18,9 +17,7 @@ export const getUsersRoutes = (): Routes => ({
 				description: 'This endpoint retrieves a list of all users.',
 				tags: ['Users'],
 				response: {
-					200: generateSuccessResponse(USER_SCHEMA.array()).describe(
-						'Users retrieved successfully',
-					),
+					200: UserSchema.array().describe('Users retrieved successfully'),
 				},
 			},
 		},
@@ -32,11 +29,9 @@ export const getUsersRoutes = (): Routes => ({
 				summary: 'Create a new user',
 				description: 'This endpoint allows you to create a new user.',
 				tags: ['Users'],
-				body: CREATE_USER_SCHEMA,
+				body: CreateUserSchema,
 				response: {
-					201: generateSuccessResponse(USER_SCHEMA).describe(
-						'User created successfully',
-					),
+					201: UserSchema.describe('User created successfully'),
 					400: generateFailedValidationResponse(),
 					409: generateFailedHttpResponse(409).describe(
 						'User with such name already exists',

@@ -1,6 +1,6 @@
 import type { Routes } from '@/core/types/routes.js'
 import { getUsersRoutes } from './users/routes/index.js'
-import { HEALTH_CHECK_SCHEMA } from '@/core/schemas/index.js'
+import { HealthCheckSchema } from '@/core/schemas/index.js'
 
 export const getRoutes = (): Routes => {
 	const { routes: usersRoutes } = getUsersRoutes()
@@ -23,7 +23,7 @@ export const getRoutes = (): Routes => {
 					tags: ['System Check'],
 					summary: 'Get system status',
 					response: {
-						200: HEALTH_CHECK_SCHEMA,
+						200: HealthCheckSchema,
 					},
 				},
 			},

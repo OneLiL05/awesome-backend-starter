@@ -1,16 +1,16 @@
-import { INTERNAL_SERVER_ERR } from '@/core/constants/index.js'
-import type { HttpError } from '@/core/types/common.js'
-import { userTable } from '@/db/schema/users.js'
+import { DUPLICATE_KEY_ERR_CODE } from '@/core/constants/db.js'
+import { InternalServerError, type HttpError } from '@/core/utils/errors.js'
+import { userTable } from '@/db/schema/user.js'
 import type { User } from '@/db/types.js'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { err, ok, Result } from 'neverthrow'
 import postgres from 'postgres'
-import type { CREATE_USER_TYPE } from '../schemas/index.js'
+import { UserAlreadyExistsError } from '../errors/index.js'
+import type { CreateUser } from '../schemas/index.js'
 import type {
 	UsersInjectableDependencies,
 	UsersRepository,
 } from '../types/index.js'
-import { USER_ALREADY_EXISTS_ERR } from '../constants/errors.js'
-import { err, ok, Result } from 'neverthrow'
 
 export class UsersRepositoryImpl implements UsersRepository {
 	private readonly db: PostgresJsDatabase
@@ -23,9 +23,7 @@ export class UsersRepositoryImpl implements UsersRepository {
 		return this.db.select().from(userTable)
 	}
 
-	async createOne({
-		name,
-	}: CREATE_USER_TYPE): Promise<Result<User, HttpError>> {
+	async createOne({ name }: CreateUser): Promise<Result<User, HttpError>> {
 		try {
 			const [user] = await this.db
 				.insert(userTable)
@@ -37,12 +35,12 @@ export class UsersRepositoryImpl implements UsersRepository {
 			if (
 				e instanceof Error &&
 				e.cause instanceof postgres.PostgresError &&
-				e.cause.code === '23505'
+				e.cause.code === DUPLICATE_KEY_ERR_CODE
 			) {
-				return err(USER_ALREADY_EXISTS_ERR)
+				return err(new UserAlreadyExistsError(name))
 			}
 
-			return err(INTERNAL_SERVER_ERR)
+			return err(new InternalServerError())
 		}
 	}
 }

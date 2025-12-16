@@ -24,11 +24,7 @@ export const generateFailureResponse = (
 		message: z.string().describe('Detailed error message'),
 	})
 
-	return z.object({
-		success: z.literal(false).describe('Indicates failure'),
-		data: z.null().describe('Response data is null on failure'),
-		error: type === 'http' ? httpErrorSchema : validationErrorSchema,
-	})
+	return type === 'http' ? httpErrorSchema : validationErrorSchema
 }
 
 export const generateFailedValidationResponse = () =>
@@ -38,12 +34,3 @@ export const generateFailedValidationResponse = () =>
 
 export const generateFailedHttpResponse = (statusCode: number) =>
 	generateFailureResponse('http', statusCode)
-
-export const generateSuccessResponse = <T>(data: ZodType<T>) => {
-	return z.object({
-		success: z.literal(true).describe('Indicates success'),
-		data: data.describe('Response data on success'),
-		message: z.string().optional().describe('Optional success message'),
-		error: z.null().describe('Error is null on success'),
-	})
-}
