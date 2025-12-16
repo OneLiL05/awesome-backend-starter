@@ -24,27 +24,6 @@ interface ValidationError {
 	}
 }
 
-interface SuccessResponse<T> {
-	success: true
-	data: T
-	message?: string
-	error: null
-}
+type FailureResponse = HttpError | ValidationError
 
-interface FailureResponse {
-	success: false
-	data: null
-	message?: string
-	error: HttpError | ValidationError
-}
-
-type BaseResponse<T> = SuccessResponse<T> | FailureResponse
-
-export type {
-	AppInstance,
-	BaseResponse,
-	FailureResponse,
-	HttpError,
-	ValidationError,
-	SuccessResponse,
-}
+export type { AppInstance, FailureResponse, HttpError, ValidationError }
